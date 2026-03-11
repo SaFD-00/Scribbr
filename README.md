@@ -7,33 +7,37 @@
 
 ```
 Scribbr/
-├── config.yaml                    # 프로젝트 설정 (프로필, 모델, 경로)
+├── config.yaml                         # 프로젝트 설정 (프로필, 모델, 경로)
 ├── README.md
 ├── requirements.txt
 ├── scripts/
-│   └── transcribe.py              # STT (mlx-whisper)
+│   └── transcribe.py                   # STT (mlx-whisper)
 ├── data/
-│   ├── lectures/                  # 수업 데이터
-│   │   └── {YYYY-MM-DD}/
-│   │       ├── *.m4a              # 녹음 (입력)
-│   │       ├── *.pdf              # 교안 (입력)
-│   │       ├── transcript.md      # STT 결과
-│   │       ├── slides.md          # 교안 정리
-│   │       └── report.md          # 최종 리포트
-│   └── meetings/                  # 미팅 데이터
-│       └── {YYYY-MM-DD}_{title}/
-│           ├── *.m4a              # 녹음 (입력)
-│           ├── transcript.md      # STT 결과
-│           └── summary.md         # 회의록
+│   ├── lectures/                       # 수업 데이터 (프로필별 분리)
+│   │   ├── cse-seminar/
+│   │   │   └── {YYYY-MM-DD}/
+│   │   │       ├── *.m4a, *.pdf        # 입력
+│   │   │       ├── transcript.md       # STT 결과
+│   │   │       ├── slides.md           # 교안 정리
+│   │   │       └── report.md           # 최종 리포트
+│   │   └── {another-lecture}/...
+│   └── meetings/                       # 미팅 데이터 (프로필별 분리)
+│       ├── lab-meeting/
+│       │   └── {YYYY-MM-DD}_{title}/
+│       │       ├── *.m4a               # 입력
+│       │       ├── transcript.md       # STT 결과
+│       │       └── summary.md          # 회의록
+│       └── {another-meeting}/...
 └── .claude/
     ├── commands/
-    │   ├── process-lecture.md     # 수업 처리 커맨드
-    │   └── process-meeting.md    # 미팅 처리 커맨드
+    │   ├── process-lecture.md          # 수업 처리 커맨드
+    │   └── process-meeting.md         # 미팅 처리 커맨드
     ├── knowledge/
-    │   └── Schedule.pdf           # 세미나 일정표
+    │   └── {profile}/                  # 프로필별 참고자료
+    │       └── Schedule.pdf
     └── templates/
-        ├── report_template.md     # 수업 리포트 템플릿
-        └── meeting_template.md    # 미팅 회의록 템플릿
+        ├── report_template.md          # 수업 리포트 템플릿
+        └── meeting_template.md         # 미팅 회의록 템플릿
 ```
 
 ## Prerequisites
@@ -60,22 +64,46 @@ default:
   conda_env: "cse"
 
 profiles:
+  # ──────────── Lectures ────────────
   cse-seminar:
     type: lecture
     name: "CSE Graduate Seminar (ESW5060)"
-    data_dir: "data/lectures"
-    schedule: ".claude/knowledge/Schedule.pdf"
+    data_dir: "data/lectures/cse-seminar"
+    schedule: ".claude/knowledge/cse-seminar/Schedule.pdf"
     template: ".claude/templates/report_template.md"
 
+  # ──────────── Meetings ────────────
   lab-meeting:
     type: meeting
     name: "Lab Weekly Meeting"
-    data_dir: "data/meetings"
+    data_dir: "data/meetings/lab-meeting"
     template: ".claude/templates/meeting_template.md"
     notion_page: ""
 ```
 
-새로운 수업이나 미팅을 추가하려면 `profiles` 섹션에 새 프로필을 추가하세요.
+### 프로필 추가
+
+새로운 수업이나 미팅을 추가하려면 `profiles`에 항목을 추가하세요:
+
+```yaml
+  # 수업 추가
+  ai-system:
+    type: lecture
+    name: "AI System Design (SWE6030)"
+    data_dir: "data/lectures/ai-system"
+    schedule: ".claude/knowledge/ai-system/Schedule.pdf"
+    template: ".claude/templates/report_template.md"
+
+  # 미팅 추가
+  advisor:
+    type: meeting
+    name: "Advisor 1:1"
+    data_dir: "data/meetings/advisor"
+    template: ".claude/templates/meeting_template.md"
+    notion_page: "https://notion.so/your-page-id"
+```
+
+각 프로필은 독립된 `data_dir`을 가지므로 데이터가 섞이지 않습니다.
 
 ## Usage
 
@@ -83,7 +111,7 @@ profiles:
 
 #### 1. 파일 배치
 
-`data/lectures/{YYYY-MM-DD}/` 폴더에 녹음 파일(m4a)과 교안(PDF)을 넣는다.
+`data/lectures/{profile}/{YYYY-MM-DD}/` 폴더에 녹음 파일(m4a)과 교안(PDF)을 넣는다.
 
 #### 2. STT 실행
 
@@ -120,28 +148,28 @@ conda run -n cse python scripts/transcribe.py 2026-03-04 --profile cse-seminar
 
 #### 1. 파일 배치
 
-`data/meetings/{YYYY-MM-DD}_{title}/` 폴더에 녹음 파일을 넣는다.
+`data/meetings/{profile}/{YYYY-MM-DD}_{title}/` 폴더에 녹음 파일을 넣는다.
 
 ```
-data/meetings/2026-03-11_lab-standup/
+data/meetings/lab-meeting/2026-03-11_standup/
 └── recording.m4a
 ```
 
 #### 2. STT 실행
 
 ```bash
-conda run -n cse python scripts/transcribe.py 2026-03-11_lab-standup --profile lab-meeting
+conda run -n cse python scripts/transcribe.py 2026-03-11_standup --profile lab-meeting
 ```
 
 #### 3. 회의록 생성 (Claude Code)
 
 ```
-/process-meeting 2026-03-11_lab-standup
+/process-meeting 2026-03-11_standup --profile lab-meeting
 ```
 
 Notion에 기록하려면:
 ```
-/process-meeting 2026-03-11_lab-standup --notion https://notion.so/your-page-id
+/process-meeting 2026-03-11_standup --profile lab-meeting --notion https://notion.so/your-page-id
 ```
 
 수행 내용:

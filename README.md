@@ -32,9 +32,6 @@ Scribbr/
     ├── commands/
     │   ├── process-lecture.md          # 수업 처리 커맨드
     │   └── process-meeting.md         # 미팅 처리 커맨드
-    ├── knowledge/
-    │   └── {profile}/                  # 프로필별 참고자료
-    │       └── Schedule.pdf
     └── templates/
         ├── report_template.md          # 수업 리포트 템플릿
         └── meeting_template.md         # 미팅 회의록 템플릿
@@ -69,7 +66,6 @@ profiles:
     type: lecture
     name: "CSE Graduate Seminar (ESW5060)"
     data_dir: "data/lectures/cse-seminar"
-    schedule: ".claude/knowledge/cse-seminar/Schedule.pdf"
     template: ".claude/templates/report_template.md"
 
   # ──────────── Meetings ────────────
@@ -91,7 +87,6 @@ profiles:
     type: lecture
     name: "AI System Design (SWE6030)"
     data_dir: "data/lectures/ai-system"
-    schedule: ".claude/knowledge/ai-system/Schedule.pdf"
     template: ".claude/templates/report_template.md"
 
   # 미팅 추가

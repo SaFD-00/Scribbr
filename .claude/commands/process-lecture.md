@@ -23,7 +23,7 @@ conda run -n <conda_env> --no-capture-output <command>
 
 ### Step 0: Validate
 
-1. Read `config.yaml` and extract the profile settings (data_dir, schedule, template, etc.)
+1. Read `config.yaml` and extract the profile settings (data_dir, template, etc.)
 2. Check that `<data_dir>/$ARGUMENTS/` folder exists
 3. Check for `transcript.md` in the folder. If missing, inform the user:
    > "transcript.md가 없습니다. 먼저 STT를 실행해주세요: `conda run -n <conda_env> python scripts/transcribe.py $ARGUMENTS --profile <profile>`"
@@ -62,11 +62,10 @@ conda run -n <conda_env> --no-capture-output <command>
 
 ### Step 2: Generate Report
 
-1. If the profile has a `schedule` field, read it to find speaker info for this date
-2. Read `<data_dir>/$ARGUMENTS/transcript.md` (STT result)
-3. Read `<data_dir>/$ARGUMENTS/slides.md` (just created)
-4. Read the template file specified in the profile's `template` field
-5. Generate `<data_dir>/$ARGUMENTS/report.md` following the template structure
+1. Read `<data_dir>/$ARGUMENTS/transcript.md` (STT result)
+2. Read `<data_dir>/$ARGUMENTS/slides.md` (just created)
+3. Read the template file specified in the profile's `template` field
+4. Generate `<data_dir>/$ARGUMENTS/report.md` following the template structure
 
 **Report must compose these 3 sections:**
 

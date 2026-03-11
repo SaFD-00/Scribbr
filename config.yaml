@@ -19,14 +19,12 @@ profiles:
     type: lecture
     name: "CSE Graduate Seminar (ESW5060)"
     data_dir: "data/lectures/cse-seminar"
-    schedule: ".claude/knowledge/cse-seminar/Schedule.pdf"
     template: ".claude/templates/report_template.md"
 
   # ai-system:
   #   type: lecture
   #   name: "AI System Design (SWE6030)"
   #   data_dir: "data/lectures/ai-system"
-  #   schedule: ".claude/knowledge/ai-system/Schedule.pdf"
   #   template: ".claude/templates/report_template.md"
 
   # ──────────── Meetings ────────────
